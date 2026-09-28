@@ -1,0 +1,480 @@
+i<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deriv Winrate Generator</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:'Inter',sans-serif;
+    background:#050816;
+    min-height:100vh;
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    align-items:center;
+    gap:40px;
+    padding:40px;
+    overflow-x:hidden;
+}
+
+body::before{
+    content:"";
+    position:fixed;
+    width:900px;
+    height:900px;
+    background:radial-gradient(circle,#00ffb31f 0%,transparent 70%);
+    filter:blur(80px);
+    z-index:0;
+}
+
+.panel{
+    position:relative;
+    z-index:2;
+    width:340px;
+    background:#0d1324;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:24px;
+    padding:25px;
+    box-shadow:0 20px 50px rgba(0,0,0,.45);
+}
+
+.panel h2{
+    color:white;
+    margin-bottom:20px;
+    font-size:22px;
+}
+
+.group{
+    margin-bottom:16px;
+}
+
+.group label{
+    display:block;
+    color:rgba(255,255,255,.6);
+    margin-bottom:8px;
+    font-size:13px;
+    font-weight:600;
+}
+
+.group input{
+    width:100%;
+    padding:14px;
+    border:none;
+    outline:none;
+    border-radius:14px;
+    background:#131a30;
+    color:white;
+    font-size:15px;
+}
+
+button{
+    width:100%;
+    border:none;
+    padding:16px;
+    border-radius:16px;
+    background:linear-gradient(180deg,#00ffb3,#00c977);
+    color:#03140f;
+    font-weight:800;
+    font-size:15px;
+    cursor:pointer;
+    margin-top:10px;
+    transition:.25s;
+}
+
+button:hover{
+    transform:translateY(-2px);
+}
+
+.card{
+    position:relative;
+    z-index:2;
+    width:470px;
+    height:560px;
+    background:linear-gradient(180deg,#0f1528 0%,#060a14 100%);
+    border-radius:32px;
+    border:1px solid rgba(255,255,255,.06);
+    overflow:hidden;
+    box-shadow:
+    0 30px 80px rgba(0,0,0,.7),
+    inset 0 1px 0 rgba(255,255,255,.05);
+}
+
+.card::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+    radial-gradient(circle at top left,#00ffb31e 0%,transparent 40%),
+    radial-gradient(circle at bottom right,#00ffb315 0%,transparent 40%);
+}
+
+.bg{
+    position:absolute;
+    font-size:140px;
+    font-weight:900;
+    color:rgba(255,255,255,.025);
+    transform:rotate(-25deg);
+    top:150px;
+    left:-40px;
+    letter-spacing:8px;
+}
+
+.top{
+    padding:28px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border-bottom:1px solid rgba(255,255,255,.05);
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.hex{
+    width:34px;
+    height:34px;
+    background:#ff4c5c;
+    clip-path:polygon(
+    25% 6.7%,
+    75% 6.7%,
+    100% 50%,
+    75% 93.3%,
+    25% 93.3%,
+    0% 50%
+    );
+    position:relative;
+    box-shadow:0 0 20px rgba(255,76,92,.5);
+}
+
+.hex::before{
+    content:"";
+    position:absolute;
+    inset:8px;
+    background:white;
+    clip-path:polygon(
+    25% 6.7%,
+    75% 6.7%,
+    100% 50%,
+    75% 93.3%,
+    25% 93.3%,
+    0% 50%
+    );
+}
+
+.logo span{
+    color:white;
+    font-size:22px;
+    font-weight:800;
+    letter-spacing:2px;
+}
+
+.title{
+    color:rgba(255,255,255,.4);
+    font-size:11px;
+    letter-spacing:2px;
+    font-weight:700;
+}
+
+.content{
+    padding:50px 35px;
+    text-align:center;
+}
+
+.label{
+    color:rgba(255,255,255,.45);
+    font-size:13px;
+    letter-spacing:3px;
+    font-weight:700;
+}
+
+.percent{
+    margin-top:15px;
+    font-size:72px;
+    font-weight:900;
+    color:#00ff9d;
+    line-height:1.1;
+    text-shadow:
+    0 0 10px rgba(0,255,157,.8),
+    0 0 35px rgba(0,255,157,.4);
+
+    word-break:break-word;
+    overflow-wrap:break-word;
+}
+
+.market{
+    margin-top:28px;
+    color:white;
+    font-size:42px;
+    font-weight:900;
+    line-height:1.1;
+}
+
+.market small{
+    display:block;
+    font-size:25px;
+    margin-top:4px;
+    opacity:.95;
+}
+
+.status-row{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:14px;
+    margin-top:28px;
+}
+
+.status{
+    background:linear-gradient(180deg,#0dff9f,#00c878);
+    color:#032115;
+    padding:10px 24px;
+    border-radius:14px;
+    font-weight:900;
+    letter-spacing:1px;
+    box-shadow:0 0 25px rgba(0,255,140,.35);
+}
+
+.multiplier{
+    color:rgba(255,255,255,.55);
+    font-weight:700;
+}
+
+.bottom{
+    position:absolute;
+    bottom:0;
+    width:100%;
+    border-top:1px solid rgba(255,255,255,.05);
+    padding:26px 30px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.stats{
+    display:flex;
+    gap:30px;
+}
+
+.stat{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+}
+
+.stat span{
+    color:rgba(255,255,255,.35);
+    font-size:10px;
+    letter-spacing:2px;
+    font-weight:700;
+}
+
+.stat strong{
+    color:white;
+    font-size:24px;
+    font-weight:900;
+}
+
+.green{
+    color:#00ff9d !important;
+}
+
+.badge{
+    width:42px;
+    height:42px;
+    border-radius:14px;
+    background:linear-gradient(180deg,#00ffb3,#00b36d);
+    position:relative;
+    box-shadow:0 0 25px rgba(0,255,150,.35);
+}
+
+.badge::before{
+    content:"";
+    position:absolute;
+    inset:9px;
+    border-radius:6px;
+    background:white;
+}
+
+@media(max-width:900px){
+
+    body{
+        flex-direction:column;
+    }
+
+    .card{
+        width:100%;
+        max-width:430px;
+        transform:scale(.92);
+    }
+
+    .panel{
+        width:100%;
+        max-width:430px;
+    }
+
+}
+
+</style>
+</head>
+<body>
+
+<div class="panel">
+
+    <h2>Deriv Certificate Generator</h2>
+
+    <div class="group">
+        <label>Winning Trades</label>
+        <input type="number" id="wins" value="19">
+    </div>
+
+    <div class="group">
+        <label>Losing Trades</label>
+        <input type="number" id="losses" value="11">
+    </div>
+
+    <div class="group">
+        <label>Stake ($)</label>
+        <input type="number" id="stakeInput" value="5">
+    </div>
+
+    <div class="group">
+        <label>Net Profit ($)</label>
+        <input type="number" id="profitInput" value="36.70">
+    </div>
+
+    <div class="group">
+        <label>Multiplier</label>
+        <input type="text" id="multiplierInput" value="20x">
+    </div>
+
+    <button onclick="generateCertificate()">
+        GENERAR CERTIFICADO
+    </button>
+
+</div>
+
+<div class="card">
+
+    <div class="bg">WIN</div>
+
+    <div class="top">
+
+        <div class="logo">
+            <div class="hex"></div>
+            <span>DERIV</span>
+        </div>
+
+        <div class="title">
+            WINRATE CERTIFICATE
+        </div>
+
+    </div>
+
+    <div class="content">
+
+        <div class="label">
+            RETURN RATE
+        </div>
+
+        <div class="percent" id="percent">
+            +63.33%
+        </div>
+
+        <div class="market">
+            DERIV
+            <small>/ SYNTHETICS</small>
+        </div>
+
+        <div class="status-row">
+
+            <div class="status">
+                WINNER
+            </div>
+
+            <div class="multiplier" id="multi">
+                20x
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="bottom">
+
+        <div class="stats">
+
+            <div class="stat">
+                <span>STAKE</span>
+                <strong id="stake">$5</strong>
+            </div>
+
+            <div class="stat">
+                <span>NET PROFIT</span>
+                <strong class="green" id="profit">$36.70</strong>
+            </div>
+
+            <div class="stat">
+                <span>TOTAL RUNS</span>
+                <strong id="runs">30</strong>
+            </div>
+
+        </div>
+
+        <div class="badge"></div>
+
+    </div>
+
+</div>
+
+<script>
+
+function generateCertificate(){
+
+    let wins = parseInt(document.getElementById("wins").value) || 0;
+    let losses = parseInt(document.getElementById("losses").value) || 0;
+
+    let total = wins + losses;
+
+    let winrate = 0;
+
+    if(total > 0){
+        winrate = ((wins / total) * 100).toFixed(2);
+    }
+
+    document.getElementById("percent").innerText =
+        "+" + winrate + "%";
+
+    document.getElementById("runs").innerText =
+        total;
+
+    document.getElementById("stake").innerText =
+        "$" + document.getElementById("stakeInput").value;
+
+    document.getElementById("profit").innerText =
+        "$" + document.getElementById("profitInput").value;
+
+    document.getElementById("multi").innerText =
+        document.getElementById("multiplierInput").value;
+
+}
+
+generateCertificate();
+
+</script>
+
+</body>
+</html>
